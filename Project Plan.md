@@ -7,7 +7,9 @@
 
 ## Refactoring
 - Refactor models
-- Add tests
+- Alan - take lead on model refactor
+- Chris - Database
+- Add tests - Audomaro will do all the testing
 - 
 
 ## Database
