@@ -1,12 +1,11 @@
 package com.expeditors.tracksartists.services.implemetations;
 
-import com.expeditors.tracksartists.dataAccessObjects.Interfaces.IArtistDao;
-import com.expeditors.tracksartists.dataAccessObjects.Interfaces.ITrackDao;
+import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
+import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
-import com.expeditors.tracksartists.services.interfaces.ITrackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -15,20 +14,24 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@Profile("profile1")
 public class ArtistServiceImpl implements IArtistService {
 
-    @Autowired public IArtistDao artistDao;
-    @Autowired public ITrackDao trackDao;
+    public final IArtistDao artistDao;
+    public final ITrackDao trackDao;
+
+    public ArtistServiceImpl(IArtistDao artistDao, ITrackDao trackDao) {
+        this.artistDao = artistDao;
+        this.trackDao = trackDao;
+    }
 
     @Override
     public Artist add(Artist artist) {
-        return this.artistDao.add(artist);
+        return this.artistDao.save(artist);
     }
 
     @Override
     public Artist getById(int id){
-        Artist artist = this.artistDao.getById(id);
+        Artist artist = this.artistDao.getReferenceById(id);
 
         if(artist == null){
             throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
@@ -39,28 +42,29 @@ public class ArtistServiceImpl implements IArtistService {
 
     @Override
     public void update(Artist artist) {
-        boolean updateWasSuccessful = this.artistDao.update(artist);
+        this.artistDao.save(artist);
 
-        if(!updateWasSuccessful){
-            throw new WrongRequestException("The update was not process, please check your entity", HttpStatus.BAD_REQUEST, artist);
-        }
+//        if(!updateWasSuccessful){
+//            throw new WrongRequestException("The update was not process, please check your entity", HttpStatus.BAD_REQUEST, artist);
+//        }
     }
 
     @Override
     public void delete(int id) {
-        boolean deleteWasSuccessful = this.artistDao.delete(id);
-
-        if (!deleteWasSuccessful) {
-            throw new WrongRequestException("The delete was not process, please check the entity that you want to delete", HttpStatus.BAD_REQUEST, id);
-        }
+         this.artistDao.deleteById(id);
+//
+//        if (!deleteWasSuccessful) {
+//            throw new WrongRequestException("The delete was not process, please check the entity that you want to delete", HttpStatus.BAD_REQUEST, id);
+//        }
     }
 
     public List<Artist> getAll(){
-        return this.artistDao.getAll();
+        return this.artistDao.findAll();
     }
 
     public List<Artist> getArtistsByIds(List<Integer> artistsIds){
-        return this.artistDao.getArtistsByIdList(artistsIds);
+//        return this.artistDao.getArtistsByIdList(artistsIds);
+        return null;
     }
 
     @Override
@@ -70,6 +74,6 @@ public class ArtistServiceImpl implements IArtistService {
 
     @Override
     public List<Track> getTracksByArtist(int idArtist) {
-        return this.trackDao.getAll().stream().filter(track -> track.getArtists().contains(idArtist)).toList();
+        return this.trackDao.findAll().stream().filter(track -> track.getArtists().contains(idArtist)).toList();
     }
 }

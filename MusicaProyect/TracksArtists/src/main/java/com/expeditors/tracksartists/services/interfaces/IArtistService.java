@@ -1,6 +1,5 @@
 package com.expeditors.tracksartists.services.interfaces;
 
-import com.expeditors.tracksartists.dataAccessObjects.Interfaces.IArtistDao;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 
@@ -16,5 +15,4 @@ public interface IArtistService {
     List<Artist> getArtistsByIds(List<Integer> artistsIds);
     List<Artist> getArtistByName(String name);
     List<Track> getTracksByArtist(int idArtist);
-
 }

@@ -24,12 +24,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/track/")
 public class TrackController {
-    @Autowired public ITrackService trackService;
-    @Autowired public IArtistService artistService;
+    public final ITrackService trackService;
+    public final IArtistService artistService;
 
     private final RestClient restClient;
 
-    public TrackController() {
+    public TrackController(IArtistService artistService, ITrackService trackService) {
         var baseUrl = "http://localhost:10001/api/pricing/";
 
         this.restClient = RestClient.builder()
@@ -37,6 +37,8 @@ public class TrackController {
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
                 .build();
+        this.artistService = artistService;
+        this.trackService = trackService;
     }
 
     @GetMapping("get/{id}")
@@ -48,10 +50,10 @@ public class TrackController {
 
     @GetMapping("getFullTrackInformation/{id}")
     public ResponseEntity<?> getFullTrackInformation(@PathVariable int id){
-        Track track = this.trackService.getById(id);
-        track.setArtistsInfo(this.artistService.getArtistsByIds(track.getArtists()));
-        track.setPrice(this.getPrice());
-        return ResponseEntity.ok(track);
+//        Track track = this.trackService.getById(id);
+//        track.setArtistsInfo(this.artistService.getArtistsByIds(track.getArtists()));
+//        track.setPrice(this.getPrice());
+        return ResponseEntity.ok(true);
     }
 
     @GetMapping("getTracksBySpecificMediaType/{mediaType}")

@@ -10,4 +10,4 @@ services:
     volumes:
       - musica-pg-db:/var/lib/postgresql/data
 volumes:
-  adoption-pg-db: {}
+  musica-pg-db: {}

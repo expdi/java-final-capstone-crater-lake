@@ -16,7 +16,11 @@ import java.util.List;
 @RequestMapping("/api/artist/")
 public class ArtistController {
 
-    @Autowired public IArtistService artistService;
+    public final IArtistService artistService;
+
+    public ArtistController(IArtistService artistService) {
+        this.artistService = artistService;
+    }
 
     @GetMapping("getAll")
     public ResponseEntity<?> getAll(){

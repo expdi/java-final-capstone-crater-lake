@@ -1,5 +1,5 @@
 spring:
   application:
-    name: musicaTracks
+    name: TracksArtists
   profiles:
-    active: default
+    active: jpa
