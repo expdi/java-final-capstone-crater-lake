@@ -5,6 +5,10 @@
 - Identify any missed requirements from Capstone 1
 - Refactoring plan if required
 
+## Refactoring
+- Refactor models
+- Add tests
+- 
 
 ## Database
 - [ ] Design
@@ -37,5 +41,8 @@ Convert app to JPA
 
 
 ## Authorization
-- As an admin user I use a REST API to update the Lower and Upper pricing limits for all tracks
+- As an admin user I want to use a REST API to update the Lower and Upper pricing limits for all tracks
 
+## Optional
+- Add SSL
+- 3rd party A{I call for additional track info
