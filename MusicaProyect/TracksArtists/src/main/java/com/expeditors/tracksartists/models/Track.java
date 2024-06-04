@@ -2,6 +2,8 @@ package com.expeditors.tracksartists.models;
 
 
 import com.expeditors.tracksartists.enums.MediaType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,9 +31,13 @@ public class Track {
     @NotEmpty
     private String album;
 
+    @Getter(onMethod = @__( @JsonIgnore))
     @NotNull(message = "Artist list is empty")
-    @Size(message = "Every track must contain at least one Artist related", min = 1)
-    @ManyToMany(mappedBy = "tracks")
+    //@Size(message = "Every track must contain at least one Artist related", min = 1)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "artist_track",
+            joinColumns = @JoinColumn(name = "artist_id"),
+            inverseJoinColumns = @JoinColumn(name = "track_id"))
     private Set<Artist> artists = new HashSet<>();
 
     private LocalDateTime issueDate;

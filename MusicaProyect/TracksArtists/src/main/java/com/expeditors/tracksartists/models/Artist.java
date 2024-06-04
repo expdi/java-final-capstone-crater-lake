@@ -1,5 +1,6 @@
 package com.expeditors.tracksartists.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,9 +20,7 @@ public class Artist {
     @NotNull
     private String name;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "artist_track",
-            joinColumns = @JoinColumn(name = "artist_id"),
-            inverseJoinColumns = @JoinColumn(name = "track_id"))
+    @Getter(onMethod = @__( @JsonIgnore))
+    @ManyToMany(mappedBy = "artists")
     private Set<Track> tracks = new HashSet<>();
 }
