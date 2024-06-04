@@ -1,10 +1,9 @@
 package com.expeditors.tracksartists.services.implemetations;
 
 import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
-import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,11 +15,9 @@ import java.util.Optional;
 public class ArtistServiceImpl implements IArtistService {
 
     public final IArtistDao artistDao;
-    public final ITrackDao trackDao;
 
-    public ArtistServiceImpl(IArtistDao artistDao, ITrackDao trackDao) {
+    public ArtistServiceImpl(IArtistDao artistDao) {
         this.artistDao = artistDao;
-        this.trackDao = trackDao;
     }
 
     @Override

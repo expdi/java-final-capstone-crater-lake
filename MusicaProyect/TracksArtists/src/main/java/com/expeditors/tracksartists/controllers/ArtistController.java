@@ -1,7 +1,7 @@
 package com.expeditors.tracksartists.controllers;
 
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

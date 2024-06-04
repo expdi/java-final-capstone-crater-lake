@@ -2,15 +2,14 @@ package com.expeditors.tracksartists.Services;
 
 import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;

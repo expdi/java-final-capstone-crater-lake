@@ -1,11 +1,10 @@
-package com.expeditors.tracksartists.services.implemetations.models;
+package com.expeditors.tracksartists.models;
 
 
 import com.expeditors.tracksartists.enums.MediaType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.Duration;
@@ -30,12 +29,18 @@ public class Track {
     private String album;
 
     @NotNull(message = "Artist list is empty")
-    @Size(message = "Every track must contain at least one Artist related", min = 1)
-    @ManyToMany(mappedBy = "tracks")
+    //@Size(message = "Every track must contain at least one Artist related", min = 1)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "artist_track",
+            joinColumns = @JoinColumn(name = "artist_id"),
+            inverseJoinColumns = @JoinColumn(name = "track_id"))
     private Set<Artist> artists = new HashSet<>();
 
     private LocalDateTime issueDate;
     private Duration duration;
-    private MediaType eMediaType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private MediaType mediaType;
+
     private Double price;
 }

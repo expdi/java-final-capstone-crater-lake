@@ -1,106 +1,101 @@
 package com.expeditors.tracksartists.services.implemetations;
 
+import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
+import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrackServiceImpl implements ITrackService {
 
     private final ITrackDao trackDao;
+    private final IArtistDao artistDao;
 
-    public TrackServiceImpl(ITrackDao trackDao) {
+    public TrackServiceImpl(ITrackDao trackDao, IArtistDao artistDao) {
+
         this.trackDao = trackDao;
+        this.artistDao = artistDao;
     }
 
     @Override
     public Track add(Track track){
-        this.executePrevalidations(track);
+        List<Artist> artists = track.getArtists().stream().toList();
+        track.getArtists().clear();
+
+        artists.forEach(curretArtist -> {
+            Optional<Artist> artist = this.artistDao.findById(curretArtist.getId());
+
+            if(artist.isEmpty()){
+                curretArtist = this.artistDao.save(curretArtist);
+                track.getArtists().add(curretArtist);
+            } else{
+                track.getArtists().add(artist.get());
+            }
+        });
+
         return trackDao.save(track);
     }
 
     @Override
     public Track getById(int id){
-        Track track = this.trackDao.getReferenceById(id);
+        Optional<Track> track = this.trackDao.findById(id);
 
-//        if(track == null){
-//            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
-//        }
+        if(track.isEmpty()){
+            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
+        }
 
-        return track;
+        return track.get();
     }
 
     @Override
     public void update(Track track) {
-        this.executePrevalidations(track);
-
         this.trackDao.save(track);
-//        if(!updateWasSuccessful){
-//            throw new WrongRequestException("The update was not process, please check your entity", HttpStatus.BAD_REQUEST, track);
-//        }
     }
 
     @Override
     public void delete(int id) {
         this.trackDao.deleteById(id);
-
-//        if (!deleteWasSuccessful) {
-//            throw new WrongRequestException("The delete was not process, please check the entity that you want to delete", HttpStatus.BAD_REQUEST, id);
-//        }
     }
 
     @Override
     public List<Track> getAll() {
-        return new ArrayList<>(this.trackDao.findAll());
+        return this.trackDao.findAll();
     }
 
     @Override
     public List<Track> getAllByMediaType(MediaType mediaType) {
-//        return this.trackDao.getByMediaType(mediaType);
-
-        return null;
+        return this.trackDao.findAllByMediaType(mediaType);
     }
 
 
     @Override
     public List<Track> getAllByIssueDateYear(int year) {
-
-//        return this.trackDao.getByYearOfIssueDate(year);
-        return null;
+        return this.trackDao.findAllByIssueDate(year);
     }
 
     @Override
     public List<Artist> getArtistByTrack(int idTrack) {
-//        List<Integer> artistsIds = this.getById(idTrack).getArtists();
-//        return this.artistDao.getArtistsByIdList(artistsIds);
-
-        return  null;
+        return this.trackDao.findArtistsByTrack(idTrack);
     }
 
     @Override
     public List<Track> getByDurationDynamic(Integer seconds, DEvaluation dEvaluation) {
-//        List<Track> tracks = this.trackDao.getAll();
-//
-//        return switch (dEvaluation){
-//            case DEvaluation.SHORTER -> tracks.stream().filter(track -> track.getDuration().toSeconds() < seconds).toList();
-//            case DEvaluation.EQUAL -> tracks.stream().filter(track -> track.getDuration().toSeconds() == seconds).toList();
-//            case DEvaluation.LONGER -> tracks.stream().filter(track -> track.getDuration().toSeconds() > seconds).toList();
-//        };
+        Duration duration = Duration.ofSeconds(seconds);
 
-        return  null;
-    }
-
-    private void executePrevalidations(Track track){
-//        if(!this.artistDao.validateAllArtistsExists(track.getArtists())){
-//            throw new InvalidBusinessLogicFieldException("Some artists does not exists in the database");
-//        }
-
+        return switch (dEvaluation){
+            case DEvaluation.SHORTER -> this.trackDao.findByDurationLessThan(duration);
+            case DEvaluation.EQUAL -> this.trackDao.findByDurationEquals(duration);
+            case DEvaluation.LONGER -> this.trackDao.findByDurationGreaterThan(duration);
+        };
     }
 }

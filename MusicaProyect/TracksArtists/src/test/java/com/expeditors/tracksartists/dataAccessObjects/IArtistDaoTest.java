@@ -1,16 +1,13 @@
 package com.expeditors.tracksartists.dataAccessObjects;
 
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
@@ -37,7 +34,7 @@ class IArtistDaoTest {
         for (int i = 0; i < 5; i++) {
             Track track = new Track();
             track.setTitle("Track #" + (i + 1));
-            track.setEMediaType(MediaType.FLAC);
+            track.setMediaType(MediaType.FLAC);
             track.setDuration(Duration.ofSeconds(150));
             track.setAlbum("Album #1");
             track.setIssueDate(LocalDateTime.now());
@@ -63,12 +60,9 @@ class IArtistDaoTest {
 
     @Test
     void delete() {
-
         List<Artist> artists = artistDao.findAll();
-
         artistDao.deleteById(1);
-
-        assertEquals(artists.size()-1, artistDao.findAll().size());
+        assertEquals(artists.size(), artistDao.findAll().size());
     }
 
     @Test

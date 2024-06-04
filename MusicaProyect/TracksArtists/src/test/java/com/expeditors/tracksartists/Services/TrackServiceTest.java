@@ -1,9 +1,10 @@
 package com.expeditors.tracksartists.Services;
 
+import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.services.implemetations.models.Artist;
-import com.expeditors.tracksartists.services.implemetations.models.Track;
+import com.expeditors.tracksartists.models.Artist;
+import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,6 +27,9 @@ class TrackServiceTest {
 
     @Mock
     private ITrackDao trackDao;
+
+    @Mock
+    private IArtistDao artistDao;
 
     @InjectMocks
     private TrackServiceImpl trackService;
@@ -37,7 +42,7 @@ class TrackServiceTest {
 
         Track track1 = new Track();
         track1.setTitle("Track 1");
-        track1.setEMediaType(MediaType.FLAC);
+        track1.setMediaType(MediaType.FLAC);
         track1.setDuration(Duration.ofSeconds(150));
         track1.setAlbum("Albulm #1");
         track1.setIssueDate(LocalDateTime.now());
@@ -45,7 +50,7 @@ class TrackServiceTest {
 
         Track track2 = new Track();
         track2.setTitle("Track 2");
-        track2.setEMediaType(MediaType.MP3);
+        track2.setMediaType(MediaType.MP3);
         track2.setDuration(Duration.ofSeconds(150));
         track2.setAlbum("Albulm #1");
         track2.setIssueDate(LocalDateTime.now());
@@ -53,7 +58,7 @@ class TrackServiceTest {
 
         Track track3 = new Track();
         track3.setTitle("Track 3");
-        track3.setEMediaType(MediaType.OGG);
+        track3.setMediaType(MediaType.OGG);
         track3.setDuration(Duration.ofSeconds(150));
         track3.setAlbum("Albulm #1");
         track3.setIssueDate(LocalDateTime.now());
@@ -61,7 +66,7 @@ class TrackServiceTest {
 
         Track track4 = new Track();
         track4.setTitle("Track 4");
-        track4.setEMediaType(MediaType.WAV);
+        track4.setMediaType(MediaType.WAV);
         track4.setDuration(Duration.ofSeconds(150));
         track4.setAlbum("Albulm #1");
         track4.setIssueDate(LocalDateTime.now());
@@ -77,19 +82,19 @@ class TrackServiceTest {
         assertAll(
                 () -> assertNotNull(result1),
                 () -> assertEquals(track1.getTitle(), result1.getTitle()),
-                () -> assertEquals(track1.getEMediaType(), result1.getEMediaType()),
+                () -> assertEquals(track1.getMediaType(), result1.getMediaType()),
 
                 () -> assertNotNull(result2),
                 () -> assertEquals(track2.getTitle(), result2.getTitle()),
-                () -> assertEquals(track2.getEMediaType(), result2.getEMediaType()),
+                () -> assertEquals(track2.getMediaType(), result2.getMediaType()),
 
                 () -> assertNotNull(result3),
                 () -> assertEquals(track3.getTitle(), result3.getTitle()),
-                () -> assertEquals(track3.getEMediaType(), result3.getEMediaType()),
+                () -> assertEquals(track3.getMediaType(), result3.getMediaType()),
 
                 () -> assertNotNull(result4),
                 () -> assertEquals(track4.getTitle(), result4.getTitle()),
-                () -> assertEquals(track4.getEMediaType(), result4.getEMediaType())
+                () -> assertEquals(track4.getMediaType(), result4.getMediaType())
         );
 
         verify(trackDao, times(4)).save(any(Track.class));
@@ -101,7 +106,7 @@ class TrackServiceTest {
         Track track = new Track();
         track.setId(trackId);
 
-        when(trackDao.getReferenceById(trackId)).thenReturn(track);
+        when(trackDao.findById(trackId)).thenReturn(Optional.of(track));
 
         Track result = trackService.getById(trackId);
 
@@ -111,7 +116,7 @@ class TrackServiceTest {
                 () -> assertEquals(track.getDuration(), result.getDuration())
         );
 
-        verify(trackDao).getReferenceById(trackId);
+        verify(trackDao).findById(trackId);
     }
 
     @Test
@@ -146,7 +151,7 @@ class TrackServiceTest {
         for (int i = 0; i < 5; i++) {
             String title = "Dance Dance Dance " + (i + 1) + "!!!!";
             Track newTrack = new Track();
-            newTrack.setId(i+1);
+            newTrack.setId(i + 1);
             newTrack.setTitle(title);
 
             tracks.add(newTrack);
