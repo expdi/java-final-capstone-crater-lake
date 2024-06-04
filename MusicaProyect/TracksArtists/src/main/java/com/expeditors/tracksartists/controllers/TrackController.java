@@ -4,21 +4,14 @@ import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
-import com.expeditors.tracksartists.pricing.MockedPricing;
-import com.expeditors.tracksartists.pricing.Pricing;
-import com.expeditors.tracksartists.pricing.PricingProvider;
-import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
-import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
-import java.time.Duration;
 import java.util.List;
 
 @RestController

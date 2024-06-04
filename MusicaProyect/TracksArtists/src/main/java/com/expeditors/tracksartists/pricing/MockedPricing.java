@@ -1,7 +1,6 @@
 package com.expeditors.tracksartists.pricing;
 
 import com.expeditors.tracksartists.models.Track;
-import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,20 +1,13 @@
 package com.expeditors.tracksartists.services.implemetations;
 
-import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.exceptionHandlers.exceptions.InvalidBusinessLogicFieldException;
-import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 

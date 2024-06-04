@@ -6,8 +6,6 @@ import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestExc
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +31,9 @@ public class ArtistServiceImpl implements IArtistService {
     public Artist getById(int id){
         Artist artist = this.artistDao.getReferenceById(id);
 
-        if(artist == null){
-            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
-        }
+//        if(artist == null){
+//            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
+//        }
 
         return artist;
     }
