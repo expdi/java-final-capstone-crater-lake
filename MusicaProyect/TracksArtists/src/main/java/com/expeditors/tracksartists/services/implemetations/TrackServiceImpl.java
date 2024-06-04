@@ -17,62 +17,62 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TrackServiceImpl implements ITrackService {
 
     private final ITrackDao trackDao;
+    private final IArtistDao artistDao;
 
-    public TrackServiceImpl(ITrackDao trackDao) {
+    public TrackServiceImpl(ITrackDao trackDao, IArtistDao artistDao) {
+
         this.trackDao = trackDao;
+        this.artistDao = artistDao;
     }
 
     @Override
     public Track add(Track track){
-        this.executePrevalidations(track);
+        List<Integer> ids = track.getArtists().stream().map(artist -> artist.getId()).toList();
+        track.getArtists().clear();
+
+        ids.forEach(id -> {
+            Optional<Artist> artist = this.artistDao.findById(id);
+            track.getArtists().add(artist.get());
+        });
+
         return trackDao.save(track);
     }
 
     @Override
     public Track getById(int id){
-        Track track = this.trackDao.getReferenceById(id);
+        Optional<Track> track = this.trackDao.findById(id);
 
-//        if(track == null){
-//            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
-//        }
+        if(track.isEmpty()){
+            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
+        }
 
-        return track;
+        return track.get();
     }
 
     @Override
     public void update(Track track) {
-        this.executePrevalidations(track);
-
         this.trackDao.save(track);
-//        if(!updateWasSuccessful){
-//            throw new WrongRequestException("The update was not process, please check your entity", HttpStatus.BAD_REQUEST, track);
-//        }
     }
 
     @Override
     public void delete(int id) {
         this.trackDao.deleteById(id);
-
-//        if (!deleteWasSuccessful) {
-//            throw new WrongRequestException("The delete was not process, please check the entity that you want to delete", HttpStatus.BAD_REQUEST, id);
-//        }
     }
 
     @Override
     public List<Track> getAll() {
-        return new ArrayList<>(this.trackDao.findAll());
+        return this.trackDao.findAll();
     }
 
     @Override
     public List<Track> getAllByMediaType(MediaType mediaType) {
-//        return this.trackDao.getByMediaType(mediaType);
-
-        return null;
+        return this.trackDao.findAllByMediaType(mediaType);
     }
 
 
@@ -102,12 +102,5 @@ public class TrackServiceImpl implements ITrackService {
 //        };
 
         return  null;
-    }
-
-    private void executePrevalidations(Track track){
-//        if(!this.artistDao.validateAllArtistsExists(track.getArtists())){
-//            throw new InvalidBusinessLogicFieldException("Some artists does not exists in the database");
-//        }
-
     }
 }

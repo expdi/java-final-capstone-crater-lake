@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ITrackDao extends JpaRepository<Track, Integer> {
-//    public List<Track> getByMediaType(MediaType eMediaType);
+    List<Track> findAllByMediaType(MediaType eMediaType);
 //    public List<Track> getByYearOfIssueDate(int year);
 //    public List<Track> getAllTracksByArtistId(int artistId);
 }

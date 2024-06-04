@@ -36,6 +36,9 @@ public class Track {
 
     private LocalDateTime issueDate;
     private Duration duration;
-    private MediaType eMediaType;
+
+    @Enumerated(EnumType.ORDINAL)
+    private MediaType mediaType;
+
     private Double price;
 }

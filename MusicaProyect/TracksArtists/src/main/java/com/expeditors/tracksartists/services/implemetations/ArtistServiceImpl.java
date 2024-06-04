@@ -16,11 +16,9 @@ import java.util.Optional;
 public class ArtistServiceImpl implements IArtistService {
 
     public final IArtistDao artistDao;
-    public final ITrackDao trackDao;
 
-    public ArtistServiceImpl(IArtistDao artistDao, ITrackDao trackDao) {
+    public ArtistServiceImpl(IArtistDao artistDao) {
         this.artistDao = artistDao;
-        this.trackDao = trackDao;
     }
 
     @Override
