@@ -45,6 +45,11 @@ public class ArtistController {
         return ResponseEntity.status(HttpStatus.FOUND).body(artists);
     }
 
+    @GetMapping("getArtistsByIds/{ids}")
+    public ResponseEntity<?> getArtistsByIds(@PathVariable List<Integer> ids){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.artistService.getArtistsByIds(ids));
+    }
+
     @PostMapping("add")
     public ResponseEntity<?> addArtist(@RequestBody @Valid Artist artist){
         Artist artistCreated = this.artistService.add(artist);

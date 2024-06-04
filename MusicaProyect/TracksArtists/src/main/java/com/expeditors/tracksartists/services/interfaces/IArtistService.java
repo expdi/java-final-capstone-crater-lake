@@ -4,6 +4,7 @@ import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IArtistService {
 
