@@ -1,7 +1,7 @@
 package com.expeditors.tracksartists.services.interfaces;
 
-import com.expeditors.tracksartists.models.Artist;
-import com.expeditors.tracksartists.models.Track;
+import com.expeditors.tracksartists.services.implemetations.models.Artist;
+import com.expeditors.tracksartists.services.implemetations.models.Track;
 
 import java.util.List;
 

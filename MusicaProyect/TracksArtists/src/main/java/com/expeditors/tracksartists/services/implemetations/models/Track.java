@@ -1,4 +1,4 @@
-package com.expeditors.tracksartists.models;
+package com.expeditors.tracksartists.services.implemetations.models;
 
 
 import com.expeditors.tracksartists.enums.MediaType;

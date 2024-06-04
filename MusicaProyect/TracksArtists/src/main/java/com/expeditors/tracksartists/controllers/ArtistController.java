@@ -1,7 +1,7 @@
 package com.expeditors.tracksartists.controllers;
 
-import com.expeditors.tracksartists.models.Artist;
-import com.expeditors.tracksartists.models.Track;
+import com.expeditors.tracksartists.services.implemetations.models.Artist;
+import com.expeditors.tracksartists.services.implemetations.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -41,6 +41,11 @@ public class ArtistController {
     public ResponseEntity<?> getArtistByName(@PathVariable String name){
         List<Artist> artists = this.artistService.getArtistByName(name);
         return ResponseEntity.status(HttpStatus.FOUND).body(artists);
+    }
+
+    @GetMapping("getArtistsByIds/{ids}")
+    public ResponseEntity<?> getArtistsByIds(@PathVariable List<Integer> ids){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.artistService.getArtistsByIds(ids));
     }
 
     @PostMapping("add")

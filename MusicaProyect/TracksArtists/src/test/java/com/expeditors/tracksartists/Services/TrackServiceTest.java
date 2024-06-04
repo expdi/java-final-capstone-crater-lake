@@ -2,8 +2,8 @@ package com.expeditors.tracksartists.Services;
 
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.models.Artist;
-import com.expeditors.tracksartists.models.Track;
+import com.expeditors.tracksartists.services.implemetations.models.Artist;
+import com.expeditors.tracksartists.services.implemetations.models.Track;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

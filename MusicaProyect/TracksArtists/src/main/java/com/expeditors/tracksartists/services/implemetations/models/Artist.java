@@ -1,10 +1,8 @@
-package com.expeditors.tracksartists.models;
+package com.expeditors.tracksartists.services.implemetations.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -22,16 +20,8 @@ public class Artist {
     private String name;
 
     @ManyToMany
-    @JoinTable(
-            name = "artist_track",
+    @JoinTable(name = "artist_track",
             joinColumns = @JoinColumn(name = "artist_id"),
-            inverseJoinColumns = @JoinColumn(name = "track_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "track_id"))
     private Set<Track> tracks = new HashSet<>();
-
-//    public Artist(int id, String name) {
-//        this.name = name;
-//        this.id = id;
-//    }
-//
 }
