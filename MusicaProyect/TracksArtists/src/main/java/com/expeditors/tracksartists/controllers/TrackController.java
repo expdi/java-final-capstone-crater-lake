@@ -41,12 +41,9 @@ public class TrackController {
         return ResponseEntity.ok(track);
     }
 
-    @GetMapping("getFullTrackInformation/{id}")
-    public ResponseEntity<?> getFullTrackInformation(@PathVariable int id){
-//        Track track = this.trackService.getById(id);
-//        track.setArtistsInfo(this.artistService.getArtistsByIds(track.getArtists()));
-//        track.setPrice(this.getPrice());
-        return ResponseEntity.ok(true);
+    @GetMapping("getAll")
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(this.trackService.getAll());
     }
 
     @GetMapping("getTracksBySpecificMediaType/{mediaType}")

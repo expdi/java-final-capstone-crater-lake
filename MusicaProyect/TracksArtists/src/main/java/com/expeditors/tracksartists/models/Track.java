@@ -3,11 +3,9 @@ package com.expeditors.tracksartists.models;
 
 import com.expeditors.tracksartists.enums.MediaType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.Duration;
@@ -31,7 +29,6 @@ public class Track {
     @NotEmpty
     private String album;
 
-    @Getter(onMethod = @__( @JsonIgnore))
     @NotNull(message = "Artist list is empty")
     //@Size(message = "Every track must contain at least one Artist related", min = 1)
     @ManyToMany(cascade = CascadeType.ALL)
