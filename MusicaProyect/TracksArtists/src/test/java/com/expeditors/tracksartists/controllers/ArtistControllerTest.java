@@ -164,7 +164,7 @@ class ArtistControllerTest {
 
         when(artistService.add(any(Artist.class))).thenReturn(artist);
 
-       mockMvc.perform(
+        mockMvc.perform(
                         post("/api/artist/add")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(artistJson)
@@ -184,11 +184,7 @@ class ArtistControllerTest {
 
         String artistJson = mapper.writeValueAsString(artist);
 
-        Artist updatedArtist = new Artist();
-        updatedArtist.setId(405);
-        updatedArtist.setName("Michael B");
-
-        when(artistService.add(any(Artist.class))).thenReturn(updatedArtist);
+        doNothing().when(artistService).update(any(Artist.class));
 
         mockMvc.perform(
                         put("/api/artist/updateArtist")
