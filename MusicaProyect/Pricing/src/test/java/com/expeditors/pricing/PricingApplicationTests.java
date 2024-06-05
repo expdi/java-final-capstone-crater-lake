@@ -13,14 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-class PricingApplicationTests {
+public class PricingApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    void contextLoads() {
-    }
     @Test
     public void testGetLimits() throws Exception {
         var actions = mockMvc.perform(get("/lowerLimit"))

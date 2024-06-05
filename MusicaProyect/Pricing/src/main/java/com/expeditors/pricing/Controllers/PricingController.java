@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
-@RequestMapping("/api/pricing/")
+@RequestMapping("/api/pricing")
 public class PricingController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class PricingController {
         pricingService.setLowerLimit(lowerLimit);
     }
 
-    @PutMapping("/upperLimit/{ul}")
+    @PutMapping("/pperLimit/{ul}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setUpperLimit(@PathVariable("ul") double upperLimit) {
         pricingService.setUpperLimit(upperLimit);
