@@ -26,6 +26,7 @@ public class PricingController {
     }
 
     @PutMapping("/lowerLimit/{ll}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setLowerLimit(@PathVariable("ll") double lowerLimit) {
 
         pricingService.setLowerLimit(lowerLimit);
