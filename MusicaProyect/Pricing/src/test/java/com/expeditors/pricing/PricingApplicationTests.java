@@ -1,11 +1,14 @@
 package com.expeditors.pricing;
 
+import com.expeditors.pricing.service.PricingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -17,8 +20,16 @@ public class PricingApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private PricingService pricingService;
+
     @Test
     public void testGetLimits() throws Exception {
+
+        when(pricingService.getLowerLimit()).thenReturn(0.0);
+        when(pricingService.getUpperLimit()).thenReturn(100.0);
+
         var actions = mockMvc.perform(get("/lowerLimit"))
                 .andExpect(status().isOk()).andReturn();
 
