@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,7 +35,7 @@ public class ArtistController {
     @GetMapping("getTracksByArtist/{id}")
     public ResponseEntity<?> getTracksByArtist(@PathVariable int id){
         List<Track> tracks = this.artistService.getTracksByArtist(id);
-        return ResponseEntity.status(HttpStatus.FOUND).body(tracks);
+        return ResponseEntity.status(HttpStatus.FOUND).body(new ArrayList<>(tracks));
     }
 
     @GetMapping("getByName/{name}")

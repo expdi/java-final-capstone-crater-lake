@@ -72,6 +72,12 @@ public class ArtistServiceImpl implements IArtistService {
 
     @Override
     public List<Track> getTracksByArtist(int idArtist) {
-        return this.artistDao.getReferenceById(idArtist).getTracks().stream().toList();
+        Optional<Artist> artist = this.artistDao.findById(idArtist);
+
+        if(artist.isEmpty()){
+            throw new WrongRequestException("There's not an artist with that id.", HttpStatus.NOT_FOUND, idArtist);
+        }
+
+        return artist.get().getTracks().stream().toList();
     }
 }

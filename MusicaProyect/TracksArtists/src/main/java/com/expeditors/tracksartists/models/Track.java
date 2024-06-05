@@ -29,7 +29,7 @@ public class Track {
     @NotEmpty
     private String album;
 
-    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(name = "artist_track",
             joinColumns = @JoinColumn(name = "track_id"),
             inverseJoinColumns = @JoinColumn(name = "artist_id"))
