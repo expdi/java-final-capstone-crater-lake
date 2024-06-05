@@ -5,7 +5,6 @@ import com.expeditors.tracksartists.enums.MediaType;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 
-import java.time.Duration;
 import java.util.List;
 
 public interface ITrackService {

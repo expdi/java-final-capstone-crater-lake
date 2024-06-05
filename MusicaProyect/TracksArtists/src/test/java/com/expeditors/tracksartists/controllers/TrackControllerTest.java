@@ -1,92 +1,264 @@
 package com.expeditors.tracksartists.controllers;
 
+import com.expeditors.tracksartists.enums.DEvaluation;
+import com.expeditors.tracksartists.enums.MediaType;
+import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
+import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(TrackController.class)
 class TrackControllerTest {
-
-    @MockBean
-    private TrackServiceImpl tracksService;
-
-    @InjectMocks
-    private TrackController controller;
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     @Autowired
     private MockMvc mockMvc;
 
-    private com.expeditors.tracksartists.enums.MediaType mp3;
+    @MockBean
+    private ArtistServiceImpl artistService;
 
-    @BeforeEach
-    public void init() {
+    @MockBean
+    private TrackServiceImpl trackService;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Test
+    void getTrackById() throws Exception {
+        int trackId = 540;
+
+        Track track = Mockito.mock(Track.class);
+        track.setId(trackId);
+        track.setTitle("Track #540");
+        track.setMediaType(MediaType.MP3);
+        track.setDuration(Duration.ofSeconds(150));
+        track.setAlbum("Album #1");
+
+        when(track.getPrice()).thenReturn(1.0);
+
+        when(trackService.getById(trackId)).thenReturn(track);
+
+        mockMvc.perform(get("/api/track/get/{id}", trackId)
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(track)))
+                .andDo(print());
+
+        verify(trackService).getById(trackId);
     }
 
     @Test
-    public void getTracksBySpecificMediaType() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/api/track/getTracksBySpecificMediaType/{mediaType}", "MP3")
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+    void getAll() throws Exception {
+        List<Track> tracks = new ArrayList<>();
 
-        ResultActions actions = mockMvc.perform(builder)
-                .andExpect(status().isOk());
+        for (int i = 0; i < 5; i++) {
+            String title = "Dance Dance Dance " + (i + 1) + "!!!!";
+            Track newTrack = new Track();
+            newTrack.setId(i + 1);
+            newTrack.setTitle(title);
+
+            tracks.add(newTrack);
+        }
+
+        when(trackService.getAll()).thenReturn(tracks);
+
+        mockMvc.perform(
+                get("/api/track/getAll")
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
-    public void getTracksBySpecificYearOfIssueDate() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/api/track/getTracksBySpecificYearOfIssueDate/{year}", 2003)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+    void getTracksBySpecificMediaType() throws Exception {
+        MediaType mediaType = MediaType.MP3;
 
-        ResultActions actions = mockMvc.perform(builder)
-                .andExpect(status().isOk());
+        List<Track> mockTracks = List.of(
+                new Track(),
+                new Track()
+        );
+
+        when(trackService.getAllByMediaType(mediaType)).thenReturn(mockTracks);
+
+        mockMvc.perform(
+                        get("/api/track/getTracksBySpecificMediaType/{mediaType}", mediaType)
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(trackService).getAllByMediaType(mediaType);
     }
 
     @Test
-    public void getArtistsByTrack() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/api/track/getArtistsByTrack/{id}", 1)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+    void getTracksBySpecificYearOfIssueDate() throws Exception {
+        LocalDateTime issueDate = LocalDateTime.of(2022,5,6,12,0,0);
 
-        ResultActions actions = mockMvc.perform(builder)
-                .andExpect(status().isOk());
+        List<Track> tracks = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            String title = "Dance Dance Dance " + (i + 1) + "!!!!";
+            Track track = new Track();
+            track.setId(i + 1);
+            track.setTitle(title);
+            track.setMediaType(MediaType.WAV);
+            track.setIssueDate(issueDate);
+            tracks.add(track);
+        }
+
+        when(trackService.getAllByIssueDateYear(issueDate.getYear())).thenReturn(tracks);
+
+        mockMvc.perform(
+                        get("/api/track/getTracksBySpecificYearOfIssueDate/{year}", issueDate.getYear())
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(trackService).getAllByIssueDateYear(issueDate.getYear());
+    }
+
+    @Test
+    void getArtistsByTrack() throws Exception {
+        Track track = new Track();
+        track.setId(1);
+        track.setTitle("Track #1");
+        track.setMediaType(MediaType.WAV);
+
+        for (int i = 0; i < 2; i++) {
+            Artist artist = new Artist();
+            artist.setId(i+1);
+            artist.setName("John " + i);
+            artist.getTracks().add(track);
+            track.getArtists().add(artist);
+        }
+
+        when(trackService.getArtistByTrack(track.getId())).thenReturn(track.getArtists().stream().toList());
+
+        mockMvc.perform(
+                        get("/api/track/getArtistsByTrack/{id}", track.getId())
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(trackService).getArtistByTrack(track.getId());
+    }
+
+    @Test
+    void getByDurationDynamic() throws Exception {
+        List<Track> tracks = new ArrayList<>();
+        int seconds = 400;
+        Duration duration = Duration.ofSeconds(seconds);
+        DEvaluation evaluation =  DEvaluation.EQUAL;
+
+        for (int i = 0; i < 5; i++) {
+            String title = "Dance Dance Dance " + (i + 1) + "!!!!";
+            Track track = new Track();
+            track.setId(i + 1);
+            track.setTitle(title);
+            track.setDuration(duration);
+            tracks.add(track);
+        }
+
+        when(trackService.getByDurationDynamic(seconds, evaluation)).thenReturn(tracks);
+
+        mockMvc.perform(
+                        get("/api/track/getByDurationDynamic")
+                                .param("duration", String.valueOf(seconds))
+                                .param("devaluation", evaluation.toString())
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isFound())
+                .andDo(print());
+
+        verify(trackService).getByDurationDynamic(seconds, evaluation);
+    }
+
+    @Test
+    void addTrack() throws Exception {
+        Track track = new Track();
+        track.setId(1);
+        track.setTitle("Track #1");
+        track.setMediaType(MediaType.WAV);
+        track.setPrice(1.5);
+        track.setAlbum("Album #1");
+
+        String trackJson = mapper.writeValueAsString(track);
+
+        when(trackService.add(any(Track.class))).thenReturn(track);
+
+        mockMvc.perform(
+                        post("/api/track/add")
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                                .content(trackJson)
+                )
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andReturn();
+
+        verify(trackService).add(any(Track.class));
+    }
+
+    @Test
+    void updateArtist() throws Exception {
+        Track track = new Track();
+        track.setId(1);
+        track.setTitle("Track #1");
+        track.setMediaType(MediaType.WAV);
+        track.setPrice(1.5);
+        track.setAlbum("Album #1");
+
+        String trackJson = mapper.writeValueAsString(track);
+
+        doNothing().when(trackService).update(any(Track.class));
+
+        mockMvc.perform(
+                        put("/api/track/update")
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                                .content(trackJson)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Success" )));
+
+        verify(trackService).update(any(Track.class));
+    }
+
+    @Test
+    void deleteArtist() throws Exception {
+        int trackId = 125;
+
+        doNothing().when(trackService).delete(trackId);
+
+        mockMvc.perform(
+                        delete("/api/track/delete/{id}", trackId)
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(trackService).delete(trackId);
     }
 }

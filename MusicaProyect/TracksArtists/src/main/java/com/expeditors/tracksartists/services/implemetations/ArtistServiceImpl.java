@@ -1,7 +1,6 @@
 package com.expeditors.tracksartists.services.implemetations;
 
 import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
-import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;

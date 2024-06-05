@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-import java.security.PrivateKey;
-
 @Builder
 @Data
 public class GenericExceptionModel {
