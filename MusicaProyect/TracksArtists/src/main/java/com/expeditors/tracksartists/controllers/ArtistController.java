@@ -2,10 +2,8 @@ package com.expeditors.tracksartists.controllers;
 
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
-import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +45,7 @@ public class ArtistController {
 
     @GetMapping("getArtistsByIds/{ids}")
     public ResponseEntity<?> getArtistsByIds(@PathVariable List<Integer> ids){
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.artistService.getArtistsByIds(ids));
+        return ResponseEntity.status(HttpStatus.FOUND).body(this.artistService.getArtistsByIds(ids));
     }
 
     @PostMapping("add")

@@ -4,18 +4,14 @@ import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.exceptionHandlers.exceptions.InvalidBusinessLogicFieldException;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,12 +29,18 @@ public class TrackServiceImpl implements ITrackService {
 
     @Override
     public Track add(Track track){
-        List<Integer> ids = track.getArtists().stream().map(artist -> artist.getId()).toList();
+        List<Artist> artists = track.getArtists().stream().toList();
         track.getArtists().clear();
 
-        ids.forEach(id -> {
-            Optional<Artist> artist = this.artistDao.findById(id);
-            track.getArtists().add(artist.get());
+        artists.forEach(curretArtist -> {
+            Optional<Artist> artist = this.artistDao.findById(curretArtist.getId());
+
+            if(artist.isEmpty()){
+                curretArtist = this.artistDao.save(curretArtist);
+                track.getArtists().add(curretArtist);
+            } else{
+                track.getArtists().add(artist.get());
+            }
         });
 
         return trackDao.save(track);
@@ -78,29 +80,22 @@ public class TrackServiceImpl implements ITrackService {
 
     @Override
     public List<Track> getAllByIssueDateYear(int year) {
-
-//        return this.trackDao.getByYearOfIssueDate(year);
-        return null;
+        return this.trackDao.findAllByIssueDate(year);
     }
 
     @Override
     public List<Artist> getArtistByTrack(int idTrack) {
-//        List<Integer> artistsIds = this.getById(idTrack).getArtists();
-//        return this.artistDao.getArtistsByIdList(artistsIds);
-
-        return  null;
+        return this.trackDao.findArtistsByTrack(idTrack);
     }
 
     @Override
     public List<Track> getByDurationDynamic(Integer seconds, DEvaluation dEvaluation) {
-//        List<Track> tracks = this.trackDao.getAll();
-//
-//        return switch (dEvaluation){
-//            case DEvaluation.SHORTER -> tracks.stream().filter(track -> track.getDuration().toSeconds() < seconds).toList();
-//            case DEvaluation.EQUAL -> tracks.stream().filter(track -> track.getDuration().toSeconds() == seconds).toList();
-//            case DEvaluation.LONGER -> tracks.stream().filter(track -> track.getDuration().toSeconds() > seconds).toList();
-//        };
+        Duration duration = Duration.ofSeconds(seconds);
 
-        return  null;
+        return switch (dEvaluation){
+            case DEvaluation.SHORTER -> this.trackDao.findByDurationLessThan(duration);
+            case DEvaluation.EQUAL -> this.trackDao.findByDurationEquals(duration);
+            case DEvaluation.LONGER -> this.trackDao.findByDurationGreaterThan(duration);
+        };
     }
 }

@@ -1,7 +1,6 @@
 package com.expeditors.tracksartists.dataAccessObjects;
 
 import com.expeditors.tracksartists.models.Artist;
-import com.expeditors.tracksartists.models.Track;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
