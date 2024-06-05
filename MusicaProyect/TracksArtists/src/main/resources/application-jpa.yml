@@ -23,4 +23,4 @@ spring:
     init:
       mode: always
       #schema-locations: classpath:/postgres/
-#      data-locations: classpath:/postgres/
+      data-locations: classpath:/postgres/musica-data.sql
