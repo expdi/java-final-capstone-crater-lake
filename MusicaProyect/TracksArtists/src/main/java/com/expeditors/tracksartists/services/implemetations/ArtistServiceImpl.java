@@ -15,9 +15,12 @@ import java.util.Optional;
 @Service
 public class ArtistServiceImpl implements IArtistService {
 
-    public final IArtistDao artistDao;
+    private final IArtistDao artistDao;
 
-    public ArtistServiceImpl(IArtistDao artistDao) {
+    private final ITrackDao trackDao;
+
+    public ArtistServiceImpl(IArtistDao artistDao, ITrackDao trackDao) {
+        this.trackDao = trackDao;
         this.artistDao = artistDao;
     }
 
@@ -44,7 +47,14 @@ public class ArtistServiceImpl implements IArtistService {
 
     @Override
     public void delete(int id) {
-         this.artistDao.deleteById(id);
+        Optional<Artist> artist = this.artistDao.findById(id);
+
+        if(artist.isEmpty()){
+            throw new WrongRequestException("There's not an artist with that id.", HttpStatus.NOT_FOUND, id);
+        }
+
+        this.trackDao.getAllTracksByArtistId(id).forEach(track -> track.getArtists().remove(artist.get()));
+        this.artistDao.deleteById(id);
     }
 
     public List<Artist> getAll(){

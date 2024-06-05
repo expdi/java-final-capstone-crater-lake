@@ -29,12 +29,10 @@ public class Track {
     @NotEmpty
     private String album;
 
-    @NotNull(message = "Artist list is empty")
-    //@Size(message = "Every track must contain at least one Artist related", min = 1)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinTable(name = "artist_track",
-            joinColumns = @JoinColumn(name = "artist_id"),
-            inverseJoinColumns = @JoinColumn(name = "track_id"))
+            joinColumns = @JoinColumn(name = "track_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private Set<Artist> artists = new HashSet<>();
 
     private LocalDateTime issueDate;

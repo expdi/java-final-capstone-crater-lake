@@ -17,7 +17,6 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
     private String name;
 
     @Getter(onMethod = @__( @JsonIgnore))
