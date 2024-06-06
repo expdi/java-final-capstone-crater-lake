@@ -2,27 +2,21 @@ package com.expeditors.tracksartists.services.implemetations;
 
 import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
-import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
-import org.springframework.http.HttpStatus;
+import com.expeditors.tracksartists.utils.EntityValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ArtistServiceImpl implements IArtistService {
 
-    private final IArtistDao artistDao;
+    @Autowired private IArtistDao artistDao;
 
-    private final ITrackDao trackDao;
-
-    public ArtistServiceImpl(IArtistDao artistDao, ITrackDao trackDao) {
-        this.trackDao = trackDao;
-        this.artistDao = artistDao;
-    }
+    @Autowired private ITrackDao trackDao;
 
     @Override
     public Artist add(Artist artist) {
@@ -31,29 +25,19 @@ public class ArtistServiceImpl implements IArtistService {
 
     @Override
     public Artist getById(int id){
-        Optional<Artist> artist = this.artistDao.findById(id);
-
-        if(artist.isEmpty()){
-            throw new WrongRequestException("There's not an artist with that id.", HttpStatus.NOT_FOUND, id);
-        }
-
-        return artist.get();
+        return EntityValidator.getIfIsValidEntity(this.artistDao, id);
     }
 
     @Override
     public void update(Artist artist) {
+        EntityValidator.getIfIsValidEntity(this.artistDao, artist.getId());
         this.artistDao.save(artist);
     }
 
     @Override
     public void delete(int id) {
-        Optional<Artist> artist = this.artistDao.findById(id);
-
-        if(artist.isEmpty()){
-            throw new WrongRequestException("There's not an artist with that id.", HttpStatus.NOT_FOUND, id);
-        }
-
-        this.trackDao.getAllTracksByArtistId(id).forEach(track -> track.getArtists().remove(artist.get()));
+        Artist artist = EntityValidator.getIfIsValidEntity(this.artistDao, id);
+        this.trackDao.getAllTracksByArtistId(id).forEach(track -> track.getArtists().remove(artist));
         this.artistDao.deleteById(id);
     }
 
@@ -71,13 +55,8 @@ public class ArtistServiceImpl implements IArtistService {
     }
 
     @Override
-    public List<Track> getTracksByArtist(int idArtist) {
-        Optional<Artist> artist = this.artistDao.findById(idArtist);
-
-        if(artist.isEmpty()){
-            throw new WrongRequestException("There's not an artist with that id.", HttpStatus.NOT_FOUND, idArtist);
-        }
-
-        return artist.get().getTracks().stream().toList();
+    public List<Track> getTracksByArtist(int id) {
+        Artist artist = EntityValidator.getIfIsValidEntity(this.artistDao, id);
+        return artist.getTracks().stream().toList();
     }
 }

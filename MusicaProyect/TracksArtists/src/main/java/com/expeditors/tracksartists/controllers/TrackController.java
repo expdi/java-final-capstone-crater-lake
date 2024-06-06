@@ -8,6 +8,7 @@ import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,27 +19,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/track/")
 public class TrackController {
-    public final ITrackService trackService;
-    public final IArtistService artistService;
+    @Autowired ITrackService trackService;
+    @Autowired IArtistService artistService;
     private final RestClient restClient;
 
-    public TrackController(IArtistService artistService, ITrackService trackService) {
-        var baseUrl = "http://localhost:10001/api/pricing/";
-
+    public TrackController() {
         this.restClient = RestClient.builder()
-                .baseUrl(baseUrl)
+                .baseUrl("http://localhost:10002/api/pricing/")
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
                 .build();
-
-        this.artistService = artistService;
-        this.trackService = trackService;
     }
 
     @GetMapping("get/{id}")
     public ResponseEntity<?> getTrackById(@PathVariable int id){
         Track track = this.trackService.getById(id);
-        track.setPrice(1.1);
+        track.setPrice(this.getPrice());
         return ResponseEntity.ok(track);
     }
 
@@ -50,14 +46,14 @@ public class TrackController {
     @GetMapping("getTracksBySpecificMediaType/{mediaType}")
     public ResponseEntity<?> getTracksBySpecificMediaType(@PathVariable MediaType mediaType){
         List<Track> tracks = this.trackService.getAllByMediaType(mediaType);
-        tracks.forEach(track -> track.setPrice(1.1));
+        tracks.forEach(track -> track.setPrice(this.getPrice()));
         return ResponseEntity.ok(tracks);
     }
 
     @GetMapping("getTracksBySpecificYearOfIssueDate/{year}")
     public ResponseEntity<?> getTracksBySpecificYearOfIssueDate(@PathVariable int year){
         List<Track> tracks = this.trackService.getAllByIssueDateYear(year);
-        tracks.forEach(track -> track.setPrice(1.1));
+        tracks.forEach(track -> track.setPrice(this.getPrice()));
         return ResponseEntity.ok(tracks);
     }
 
@@ -70,7 +66,7 @@ public class TrackController {
     @GetMapping("getByDurationDynamic")
     public ResponseEntity<?> getByDurationDynamic(@RequestParam("duration") Integer seconds, @RequestParam("devaluation") DEvaluation dEvaluation){
         List<Track> tracks = this.trackService.getByDurationDynamic(seconds, dEvaluation);
-        tracks.forEach(track -> track.setPrice(1.1));
+        tracks.forEach(track -> track.setPrice(this.getPrice()));
         return ResponseEntity.status(HttpStatus.FOUND).body(tracks);
     }
 

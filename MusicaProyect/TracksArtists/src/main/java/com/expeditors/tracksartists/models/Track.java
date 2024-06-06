@@ -1,6 +1,5 @@
 package com.expeditors.tracksartists.models;
 
-
 import com.expeditors.tracksartists.enums.MediaType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -35,11 +34,10 @@ public class Track {
             inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private Set<Artist> artists = new HashSet<>();
 
-    private LocalDateTime issueDate;
-    private Duration duration;
-
     @Enumerated(EnumType.ORDINAL)
     private MediaType mediaType;
 
     private Double price;
+    private LocalDateTime issueDate;
+    private Duration duration;
 }
