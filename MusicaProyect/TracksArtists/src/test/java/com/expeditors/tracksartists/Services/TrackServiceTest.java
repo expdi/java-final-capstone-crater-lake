@@ -177,17 +177,42 @@ class TrackServiceTest {
         track.setId(trackId);
         track.setTitle("Dance Dance Dance!!!");
 
+        when(trackDao.existsById(trackId)).thenReturn(true);
         when(trackDao.save(any(Track.class))).thenReturn(track);
 
         trackService.update(track);
 
+        verify(trackDao).existsById(trackId);
         verify(trackDao).save(any(Track.class));
+    }
+
+
+    @Test
+    void updateTrack_noFound() {
+        int trackId = 1;
+        Track track = new Track();
+        track.setId(trackId);
+
+        String expectedMessage = "Track not found with the specific id";
+        int expectedStatusCode = HttpStatus.NOT_FOUND.value();
+
+        when(trackDao.existsById(trackId)).thenReturn(false);
+
+        WrongRequestException expectedException = assertThrows(WrongRequestException.class, () -> trackService.update(track));
+        assertEquals(expectedMessage, expectedException.getMessage());
+        assertEquals(expectedStatusCode, expectedException.getHttpStatus().value());
+
+        verify(trackDao).existsById(trackId);
     }
 
     @Test
     void delete() {
         int trackId = 1;
+        Track track = new Track();
+        track.setId(trackId);
 
+
+        when(trackDao.findById(trackId)).thenReturn(Optional.of(track));
         doNothing().when(trackDao).deleteById(trackId);
 
         trackService.delete(trackId);
@@ -415,6 +440,8 @@ class TrackServiceTest {
         );
 
         verify(trackDao).findByDurationEquals(duration);
+        verify(trackDao, never()).findByDurationLessThan(duration);
+        verify(trackDao, never()).findByDurationGreaterThan(duration);
     }
 
     @Test
@@ -446,7 +473,9 @@ class TrackServiceTest {
                 () -> assertEquals(trackDuration, results.getFirst().getDuration())
         );
 
+        verify(trackDao, never()).findByDurationEquals(durationFilter);
         verify(trackDao).findByDurationLessThan(durationFilter);
+        verify(trackDao, never()).findByDurationGreaterThan(durationFilter);
     }
 
     @Test
@@ -478,6 +507,8 @@ class TrackServiceTest {
                 () -> assertEquals(trackDuration, results.getFirst().getDuration())
         );
 
+        verify(trackDao, never()).findByDurationEquals(durationFilter);
+        verify(trackDao, never()).findByDurationLessThan(durationFilter);
         verify(trackDao).findByDurationGreaterThan(durationFilter);
     }
 }

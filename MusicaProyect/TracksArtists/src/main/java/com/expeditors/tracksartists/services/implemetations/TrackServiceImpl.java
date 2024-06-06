@@ -8,7 +8,6 @@ import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestExc
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
