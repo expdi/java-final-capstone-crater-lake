@@ -157,7 +157,7 @@ class TrackServiceTest {
     @Test
     void getById_notFound() {
         int trackId = 1;
-        String expectedMessage = "Track not found with the specific id";
+        String expectedMessage = "The id does not match with our records";
         int expectedStatusCode = HttpStatus.NOT_FOUND.value();
 
         when(trackDao.findById(trackId)).thenReturn(Optional.empty());
@@ -177,12 +177,12 @@ class TrackServiceTest {
         track.setId(trackId);
         track.setTitle("Dance Dance Dance!!!");
 
-        when(trackDao.existsById(trackId)).thenReturn(true);
         when(trackDao.save(any(Track.class))).thenReturn(track);
+        when(trackDao.findById(trackId)).thenReturn(Optional.of(track));
 
         trackService.update(track);
 
-        verify(trackDao).existsById(trackId);
+        verify(trackDao).findById(trackId);
         verify(trackDao).save(any(Track.class));
     }
 
@@ -193,16 +193,16 @@ class TrackServiceTest {
         Track track = new Track();
         track.setId(trackId);
 
-        String expectedMessage = "Track not found with the specific id";
+        String expectedMessage = "The id does not match with our records";
         int expectedStatusCode = HttpStatus.NOT_FOUND.value();
 
-        when(trackDao.existsById(trackId)).thenReturn(false);
+        when(trackDao.findById(trackId)).thenReturn(Optional.empty());
 
         WrongRequestException expectedException = assertThrows(WrongRequestException.class, () -> trackService.update(track));
         assertEquals(expectedMessage, expectedException.getMessage());
         assertEquals(expectedStatusCode, expectedException.getHttpStatus().value());
 
-        verify(trackDao).existsById(trackId);
+        verify(trackDao).findById(trackId);
     }
 
     @Test
