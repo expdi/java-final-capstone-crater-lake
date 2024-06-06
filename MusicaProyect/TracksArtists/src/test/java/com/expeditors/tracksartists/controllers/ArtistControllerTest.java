@@ -4,20 +4,25 @@ import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,9 +37,19 @@ class ArtistControllerTest {
     private ArtistServiceImpl artistService;
 
     @Autowired
+    private WebApplicationContext context;
+
+    @Autowired
     private ObjectMapper mapper;
 
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(springSecurity()).build();
+    }
+
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getAll() throws Exception {
         List<Artist> artists = new ArrayList<>();
 
@@ -58,6 +73,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getById() throws Exception {
         int artistId = 1;
 
@@ -78,6 +94,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTracksByArtist() throws Exception {
         Artist artist = new Artist();
         artist.setId(1);
@@ -105,6 +122,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getArtistByName() throws Exception {
         List<Artist> artists = new ArrayList<>();
         String artistName = "Jay";
@@ -129,6 +147,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getArtistsByIds() throws Exception {
         List<Artist> artists = new ArrayList<>();
         String artistName = "Jay";
@@ -155,6 +174,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void addArtist() throws Exception {
         Artist artist = new Artist();
         artist.setId(400);
@@ -177,6 +197,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void updateArtist() throws Exception {
         Artist artist = new Artist();
         artist.setId(405);
@@ -198,6 +219,7 @@ class ArtistControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void deleteArtist() throws Exception {
         int artistId = 600;
 

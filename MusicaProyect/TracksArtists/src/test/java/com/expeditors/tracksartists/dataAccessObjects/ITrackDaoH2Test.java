@@ -127,12 +127,14 @@ class ITrackDaoH2Test {
     void save() {
         Track track = new Track();
         track.setTitle("Track #1000");
+        track.setAlbum("Album #1");
 
         Track result = trackDao.save(track);
 
         assertAll(
                 () -> assertTrue(result.getId() != 0),
-                () -> assertEquals(track.getTitle(), result.getTitle())
+                () -> assertEquals(track.getTitle(), result.getTitle()),
+                () -> assertEquals(track.getAlbum(), result.getAlbum())
         );
     }
 
