@@ -6,13 +6,21 @@ import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
+import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,19 +40,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TrackController.class)
-@WithMockUser(username = "alanaudo", roles = {"USER", "ADMIN"})
 class TrackControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private ArtistServiceImpl artistService;
+    private TrackServiceImpl trackService;
 
     @MockBean
-    private TrackServiceImpl trackService;
+    private ArtistServiceImpl artistService;
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @Test
     void getTrackById() throws Exception {
@@ -203,12 +213,12 @@ class TrackControllerTest {
     void addTrack() throws Exception {
         Track track = new Track();
 
-//        when(track.getId()).thenReturn(1);
-//        when(track.getTitle()).thenReturn("Track #1");
-//        when(track.getAlbum()).thenReturn("Album #1");
-//        when(track.getPrice()).thenReturn(1.25);
-//
-//        doNothing().when(track).setPrice(1.25);
+        when(track.getId()).thenReturn(1);
+        when(track.getTitle()).thenReturn("Track #1");
+        when(track.getAlbum()).thenReturn("Album #1");
+        when(track.getPrice()).thenReturn(1.25);
+
+        doNothing().when(track).setPrice(1.25);
 
         String trackJson = mapper.writeValueAsString(track);
 
@@ -251,16 +261,15 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void deleteArtist() throws Exception {
         int trackId = 125;
-
-        doNothing().when(trackService).delete(trackId);
 
         mockMvc.perform(
                         delete("/api/track/delete/{id}", trackId)
                                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
         verify(trackService).delete(trackId);

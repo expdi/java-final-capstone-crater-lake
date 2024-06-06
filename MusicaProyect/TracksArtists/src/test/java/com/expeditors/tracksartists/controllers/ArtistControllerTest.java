@@ -3,8 +3,8 @@ package com.expeditors.tracksartists.controllers;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
+import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +34,26 @@ class ArtistControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ArtistServiceImpl artistService;
+    private TrackServiceImpl trackService;
 
-    @Autowired
-    private WebApplicationContext context;
+    @MockBean
+    private ArtistServiceImpl artistService;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @BeforeEach
+    @Autowired
+    private WebApplicationContext context;
+
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(springSecurity()).build();
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
     }
 
-    @Test
     @WithMockUser(username = "alanaudo", roles = {"USER"})
+    @Test
     void getAll() throws Exception {
         List<Artist> artists = new ArrayList<>();
 
@@ -197,7 +201,6 @@ class ArtistControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void updateArtist() throws Exception {
         Artist artist = new Artist();
         artist.setId(405);
@@ -223,13 +226,11 @@ class ArtistControllerTest {
     void deleteArtist() throws Exception {
         int artistId = 600;
 
-        doNothing().when(artistService).delete(artistId);
-
         mockMvc.perform(
-                        delete("/api/artist/delete/{artistId}", artistId)
+                        delete("/api/artist/delete/{id}" , artistId)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
         verify(artistService).delete(artistId);
