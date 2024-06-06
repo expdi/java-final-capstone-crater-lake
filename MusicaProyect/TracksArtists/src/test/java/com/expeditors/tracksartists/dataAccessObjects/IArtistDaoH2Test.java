@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
@@ -18,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("h2")
 @DataJpaTest
-class IArtistDaoTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+class IArtistDaoH2Test {
     @Autowired
     private IArtistDao artistDao;
 
@@ -31,7 +33,13 @@ class IArtistDaoTest {
         artist.setName("John");
         entityManager.persist(artist);
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i < 10; i++) {
+            Artist newArtist = new Artist();
+            newArtist.setName("Team X #" + i );
+            entityManager.persist(newArtist);
+        }
+
+        for (int i = 0; i <= 2; i++) {
             Track track = new Track();
             track.setTitle("Track #" + (i + 1));
             track.setMediaType(MediaType.FLAC);
@@ -67,9 +75,13 @@ class IArtistDaoTest {
 
     @Test
     void getByIdIn() {
+        List<Artist> artists = artistDao.getByIdIn(List.of(1,5));
+        assertEquals(2, artists.size());
     }
 
     @Test
     void getByNameContaining() {
+        List<Artist> artists = artistDao.getByNameContaining("Team X");
+        assertEquals(9, artists.size());
     }
 }

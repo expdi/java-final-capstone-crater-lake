@@ -200,11 +200,13 @@ class TrackControllerTest {
     @Test
     void addTrack() throws Exception {
         Track track = new Track();
-        track.setId(1);
-        track.setTitle("Track #1");
-        track.setMediaType(MediaType.WAV);
-        track.setPrice(1.5);
-        track.setAlbum("Album #1");
+
+//        when(track.getId()).thenReturn(1);
+//        when(track.getTitle()).thenReturn("Track #1");
+//        when(track.getAlbum()).thenReturn("Album #1");
+//        when(track.getPrice()).thenReturn(1.25);
+//
+//        doNothing().when(track).setPrice(1.25);
 
         String trackJson = mapper.writeValueAsString(track);
 

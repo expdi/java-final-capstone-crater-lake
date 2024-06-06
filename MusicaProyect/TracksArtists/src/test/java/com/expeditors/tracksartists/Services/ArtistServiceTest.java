@@ -6,11 +6,13 @@ import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestExc
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
+import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,6 @@ class ArtistServiceTest {
 
     @InjectMocks
     private ArtistServiceImpl artistService;
-
 
     @Test
     void add() {
@@ -125,6 +126,26 @@ class ArtistServiceTest {
     }
 
     @Test
+    void delete_noFound() {
+        int artistId = 1;
+        String expectedMessage = "There's not an artist with that id.";
+        int expectedStatusCode = HttpStatus.NOT_FOUND.value();
+
+        when(artistDao.findById(artistId)).thenReturn(Optional.empty());
+
+        WrongRequestException expectedException = assertThrows(WrongRequestException.class, () -> artistService.delete(artistId));
+
+        assertAll(
+                () -> assertEquals(expectedMessage, expectedException.getMessage()),
+                () -> assertEquals(expectedStatusCode, expectedException.getHttpStatus().value())
+        );
+
+        verify(artistDao ).findById(artistId);
+        verify(trackDao, never()).getAllTracksByArtistId(artistId);
+        verify(artistDao, never()).deleteById(artistId);
+    }
+
+    @Test
     void getAll() {
         List<Artist> artists = new ArrayList<>();
 
@@ -214,7 +235,7 @@ class ArtistServiceTest {
             artist.getTracks().add(newTrack);
         }
 
-        when(artistDao.getReferenceById(artistId)).thenReturn(artist);
+        when(artistDao.findById(artistId)).thenReturn(Optional.of(artist));
 
         List<Track> result = artistService.getTracksByArtist(artistId);
 
@@ -224,6 +245,24 @@ class ArtistServiceTest {
                 () -> assertEquals(artist.getTracks().stream().toList().getLast().getTitle(), result.getLast().getTitle())
         );
 
-        verify(artistDao).getReferenceById(artistId);
+        verify(artistDao).findById(artistId);
+    }
+
+    @Test
+    void getTracksByArtist_noFound() {
+        int artistId = 1;
+        String expectedMessage = "There's not an artist with that id.";
+        int expectedStatusCode = HttpStatus.NOT_FOUND.value();
+
+        when(artistDao.findById(artistId)).thenReturn(Optional.empty());
+
+        WrongRequestException exception = assertThrows(WrongRequestException.class, () -> artistService.getTracksByArtist(artistId));
+
+        assertAll(
+                () -> assertEquals(expectedMessage, exception.getMessage()),
+                () -> assertEquals(expectedStatusCode, exception.getHttpStatus().value())
+        );
+
+        verify(artistDao).findById(artistId);
     }
 }
