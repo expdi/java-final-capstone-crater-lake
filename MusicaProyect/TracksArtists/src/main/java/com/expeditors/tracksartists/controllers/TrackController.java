@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -24,10 +26,14 @@ public class TrackController {
     private final RestClient restClient;
 
     public TrackController() {
+
+        var testingEncode = "waffles:password";
+        var testingAuth = Base64.getEncoder().encodeToString(testingEncode.getBytes());
         this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:10002/api/pricing/")
+                .baseUrl("http://localhost:10010/api/pricing")
                 .defaultHeader("Accept", "application/json")
                 .defaultHeader("Content-Type", "application/json")
+                .defaultHeader("Authorization","Basic " + testingAuth)
                 .build();
     }
 

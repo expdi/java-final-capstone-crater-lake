@@ -20,7 +20,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
 
         UserDetails alanaudo = User.withUsername("alanaudo")
-                .password("{bcrypt}$2a$10$TPWu.4BJPkBEuppRAkuqMOt2JoIPdruNb7TT/UkZLT/Cfelh6DIuy")
+                .password("{bcrypt}$2a$10$LkAQVsjdRLqd/s/DxB6qg.PTCtpFzeaU6bq6NpaMRA.GuldBfOnQa")
                 .roles("USER")
                 .build();
 
@@ -28,16 +28,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain courseRatingChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain tracksChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers(HttpMethod.GET, "/artist/**").authenticated();
-            auth.requestMatchers(HttpMethod.PUT, "/artist/**").hasRole("USER");
-            auth.requestMatchers(HttpMethod.POST, "/artist/**").hasRole("USER");
-            auth.requestMatchers(HttpMethod.DELETE, "/artist/**").hasRole("USER");
-            auth.requestMatchers(HttpMethod.GET, "/track/**").authenticated();
-            auth.requestMatchers(HttpMethod.PUT, "/track/**").hasRole("USER");
-            auth.requestMatchers(HttpMethod.POST, "/track/**").hasRole("USER");
-            auth.requestMatchers(HttpMethod.DELETE, "/track/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.GET, "/api/artist/**").authenticated();
+            auth.requestMatchers(HttpMethod.PUT, "/api/artist/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.POST, "/api/artist/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.DELETE, "/api/artist/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.GET, "/api/track/**").authenticated();
+            auth.requestMatchers(HttpMethod.PUT, "/api/track/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.POST, "/api/track/**").authenticated();
+            auth.requestMatchers(HttpMethod.DELETE, "/api/track/**").hasRole("USER");
             auth.anyRequest().denyAll();
         });
 
