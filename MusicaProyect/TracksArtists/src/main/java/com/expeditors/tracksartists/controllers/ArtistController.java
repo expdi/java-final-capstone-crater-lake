@@ -4,6 +4,7 @@ import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,7 @@ import java.util.List;
 @RequestMapping("/api/artist/")
 public class ArtistController {
 
-    public final IArtistService artistService;
-
-    public ArtistController(IArtistService artistService) {
-        this.artistService = artistService;
-    }
+    @Autowired IArtistService artistService;
 
     @GetMapping("getAll")
     public ResponseEntity<?> getAll(){

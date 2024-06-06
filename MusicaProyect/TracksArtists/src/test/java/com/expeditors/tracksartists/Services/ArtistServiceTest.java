@@ -102,6 +102,7 @@ class ArtistServiceTest {
         artist.setName("Michael B");
 
         when(artistDao.save(any(Artist.class))).thenReturn(artist);
+        when(artistDao.findById(artistId)).thenReturn(Optional.of(artist));
 
         artistService.update(artist);
 
@@ -128,7 +129,7 @@ class ArtistServiceTest {
     @Test
     void delete_noFound() {
         int artistId = 1;
-        String expectedMessage = "There's not an artist with that id.";
+        String expectedMessage = "The id does not match with our records";
         int expectedStatusCode = HttpStatus.NOT_FOUND.value();
 
         when(artistDao.findById(artistId)).thenReturn(Optional.empty());
@@ -251,7 +252,7 @@ class ArtistServiceTest {
     @Test
     void getTracksByArtist_noFound() {
         int artistId = 1;
-        String expectedMessage = "There's not an artist with that id.";
+        String expectedMessage = "The id does not match with our records";
         int expectedStatusCode = HttpStatus.NOT_FOUND.value();
 
         when(artistDao.findById(artistId)).thenReturn(Optional.empty());

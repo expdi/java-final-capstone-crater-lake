@@ -4,64 +4,43 @@ import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
 import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
-import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.ITrackService;
+import com.expeditors.tracksartists.utils.EntityValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TrackServiceImpl implements ITrackService {
 
-    private final ITrackDao trackDao;
-    private final IArtistDao artistDao;
-
-    public TrackServiceImpl(ITrackDao trackDao, IArtistDao artistDao) {
-
-        this.trackDao = trackDao;
-        this.artistDao = artistDao;
-    }
+    @Autowired private ITrackDao trackDao;
+    @Autowired private IArtistDao artistDao;
 
     @Override
     public Track add(Track track){
         List<Artist> artists = track.getArtists().stream().toList();
         track.getArtists().clear();
 
-        artists.forEach(curretArtist -> {
-            Optional<Artist> artist = this.artistDao.findById(curretArtist.getId());
-
-            if(artist.isEmpty()){
-                curretArtist = this.artistDao.save(curretArtist);
-                track.getArtists().add(curretArtist);
-            } else{
-                track.getArtists().add(artist.get());
-            }
-        });
+        for (Artist curretArtist: artists) {
+            this.artistDao.findById(curretArtist.getId()).ifPresentOrElse(artist -> track.getArtists().add(artist), () -> track.getArtists().add(this.artistDao.save(curretArtist)));
+        }
 
         return trackDao.save(track);
     }
 
     @Override
     public Track getById(int id){
-        Optional<Track> track = this.trackDao.findById(id);
-
-        if(track.isEmpty()){
-            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, id);
-        }
-
-        return track.get();
+        return  EntityValidator.getIfIsValidEntity(this.trackDao, id);
     }
 
     @Override
     public void update(Track track) {
-        if(!this.trackDao.existsById(track.getId())){
-            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, track.getId());
-        }
+        EntityValidator.getIfIsValidEntity(this.trackDao, track.getId());
         this.trackDao.save(track);
     }
 
@@ -83,7 +62,6 @@ public class TrackServiceImpl implements ITrackService {
     public List<Track> getAllByMediaType(MediaType mediaType) {
         return this.trackDao.findAllByMediaType(mediaType);
     }
-
 
     @Override
     public List<Track> getAllByIssueDateYear(int year) {

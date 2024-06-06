@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface IArtistDao extends JpaRepository<Artist, Integer> {
     List<Artist> getByIdIn(List<Integer> ids);
-
     List<Artist> getByNameContaining(String name);
 }
