@@ -6,7 +6,7 @@ values (0,'Lana Del Rey'),
         (4,'Tiesto'),
         (5,'Slipnot');
 
-insert into track(duration,id,media_type,price,issue_date,album,title)
+insert into track(duration,id,mediaType,price,issue_date,album,title)
 values (1000,0,2,5.00,'2024-02-05T12:59:11.332','Pink Friday','Anaconda'),
       (500,1,2,5.00,'2005-01-15T12:59:11.332','Bad habit','Bad Habit'),
         (630,2,0,5.00,'2010-02-25T12:59:11.332','Album1','Mariposa Traicionera'),
