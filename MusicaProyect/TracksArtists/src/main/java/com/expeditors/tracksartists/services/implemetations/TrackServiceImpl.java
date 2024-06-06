@@ -60,6 +60,9 @@ public class TrackServiceImpl implements ITrackService {
 
     @Override
     public void update(Track track) {
+        if(!this.trackDao.existsById(track.getId())){
+            throw new WrongRequestException("Track not found with the specific id", HttpStatus.NOT_FOUND, track.getId());
+        }
         this.trackDao.save(track);
     }
 

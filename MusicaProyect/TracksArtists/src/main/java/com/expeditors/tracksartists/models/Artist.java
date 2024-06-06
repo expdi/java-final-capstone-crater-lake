@@ -19,7 +19,7 @@ public class Artist {
 
     private String name;
 
-    @Getter(onMethod = @__( @JsonIgnore))
-    @ManyToMany(mappedBy = "artists")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "artists", cascade = CascadeType.DETACH)
     private Set<Track> tracks = new HashSet<>();
 }
