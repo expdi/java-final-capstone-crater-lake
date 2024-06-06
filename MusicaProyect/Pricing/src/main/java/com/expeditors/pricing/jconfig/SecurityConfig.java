@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .build();
 
         UserDetails waffles = User.withUsername("waffles")
-                .password("{bcrypt}$2a$10$JVprNpkEaGv0BM9aIK..Y.4tRsr..Qv5tA1qVKbrYZRpwP6/7L.S.")
+                .password("{bcrypt}$2a$10$fR66BsNci0b1LD5GPf/eJuIshDxlHgT/9XnwxRaGkhi6gw1W3YFoi")
                 .roles("USER")
                 .build();
 
@@ -34,7 +34,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain pricingFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers(HttpMethod.GET, "/pricing/**").authenticated();
+            auth.requestMatchers(HttpMethod.GET, "/api/pricing/**").authenticated();
             auth.requestMatchers(HttpMethod.PUT).hasRole("ADMIN");
 
             auth.anyRequest().denyAll();
