@@ -33,6 +33,11 @@ public class SecurityConfig {
             auth.requestMatchers(HttpMethod.GET, "/artist/**").authenticated();
             auth.requestMatchers(HttpMethod.PUT, "/artist/**").hasRole("USER");
             auth.requestMatchers(HttpMethod.POST, "/artist/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.DELETE, "/artist/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.GET, "/track/**").authenticated();
+            auth.requestMatchers(HttpMethod.PUT, "/track/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.POST, "/track/**").hasRole("USER");
+            auth.requestMatchers(HttpMethod.DELETE, "/track/**").hasRole("USER");
             auth.anyRequest().denyAll();
         });
 
