@@ -2,6 +2,7 @@ package com.expeditors.tracksartists.controllers;
 
 import com.expeditors.tracksartists.enums.DEvaluation;
 import com.expeditors.tracksartists.enums.MediaType;
+import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -18,17 +20,17 @@ import java.util.List;
 public class TrackController {
     public final ITrackService trackService;
     public final IArtistService artistService;
-
-    //private final RestClient restClient = null;
+    private final RestClient restClient;
 
     public TrackController(IArtistService artistService, ITrackService trackService) {
         var baseUrl = "http://localhost:10001/api/pricing/";
 
-//        this.restClient = RestClient.builder()
-//                .baseUrl(baseUrl)
-//                .defaultHeader("Accept", "application/json")
-//                .defaultHeader("Content-Type", "application/json")
-//                .build();
+        this.restClient = RestClient.builder()
+                .baseUrl(baseUrl)
+                .defaultHeader("Accept", "application/json")
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+
         this.artistService = artistService;
         this.trackService = trackService;
     }
@@ -75,7 +77,7 @@ public class TrackController {
     @PostMapping("add")
     public ResponseEntity<Track> addTrack(@RequestBody @Valid Track track){
         Track trackAdded =  this.trackService.add(track);
-        track.setPrice(1.0);
+        track.setPrice(this.getPrice());
         return ResponseEntity.status(HttpStatus.CREATED).body(trackAdded);
     }
 
@@ -91,17 +93,15 @@ public class TrackController {
         return ResponseEntity.ok("Success");
     }
 
-//    private double getPrice(){
-//
-//        ResponseEntity<Double> response = restClient.get()
-//                .retrieve()
-//                .toEntity(Double.class);
-//
-//        if(response.getBody() != null){
-//
-//            return response.getBody();
-//        }
-//
-//        return 0;
-//    }
+    private double getPrice(){
+        ResponseEntity<Double> response = restClient.get()
+                .retrieve()
+                .toEntity(Double.class);
+
+        if(response.getBody() == null){
+            throw new WrongRequestException("Pricing Service return null value", HttpStatus.SERVICE_UNAVAILABLE, response);
+        }
+
+        return response.getBody();
+    }
 }

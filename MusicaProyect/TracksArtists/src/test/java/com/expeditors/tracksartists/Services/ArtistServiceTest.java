@@ -1,6 +1,7 @@
 package com.expeditors.tracksartists.Services;
 
 import com.expeditors.tracksartists.dataAccessObjects.IArtistDao;
+import com.expeditors.tracksartists.dataAccessObjects.ITrackDao;
 import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestException;
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.*;
 class ArtistServiceTest {
     @Mock
     private IArtistDao artistDao;
+
+    @Mock
+    private ITrackDao trackDao;
 
     @InjectMocks
     private ArtistServiceImpl artistService;
@@ -107,10 +111,16 @@ class ArtistServiceTest {
     void delete() {
         int artistId = 1;
 
+        Artist artist = new Artist();
+        artist.setId(artistId);
+        Optional<Artist> optionalArtist = Optional.of(artist);
+
+        when(artistDao.findById(artistId)).thenReturn(optionalArtist);
+        when(trackDao.getAllTracksByArtistId(artistId)).thenReturn(new ArrayList<>());
+
         doNothing().when(artistDao).deleteById(artistId);
 
         artistService.delete(artistId);
-
         verify(artistDao).deleteById(artistId);
     }
 
