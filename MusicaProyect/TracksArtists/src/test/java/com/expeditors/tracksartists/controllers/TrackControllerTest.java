@@ -8,6 +8,7 @@ import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -33,6 +36,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -53,10 +57,19 @@ class TrackControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
-    @Mock
-    private SecurityContext securityContext;
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+    }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTrackById() throws Exception {
         int trackId = 540;
 
@@ -81,6 +94,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getAll() throws Exception {
         List<Track> tracks = new ArrayList<>();
 
@@ -104,6 +118,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTracksBySpecificMediaType() throws Exception {
         MediaType mediaType = MediaType.MP3;
 
@@ -125,6 +140,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTracksBySpecificYearOfIssueDate() throws Exception {
         LocalDateTime issueDate = LocalDateTime.of(2022,5,6,12,0,0);
 
@@ -153,6 +169,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getArtistsByTrack() throws Exception {
         Track track = new Track();
         track.setId(1);
@@ -180,6 +197,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getByDurationDynamic() throws Exception {
         List<Track> tracks = new ArrayList<>();
         int seconds = 400;
@@ -210,6 +228,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void addTrack() throws Exception {
         Track track = new Track();
 
@@ -237,6 +256,7 @@ class TrackControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void updateArtist() throws Exception {
         Track track = new Track();
         track.setId(1);
