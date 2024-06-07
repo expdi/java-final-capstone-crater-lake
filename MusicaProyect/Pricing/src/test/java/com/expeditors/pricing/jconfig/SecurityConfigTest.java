@@ -1,4 +1,4 @@
-package com.expeditors.tracksartists.jconfig;
+package com.expeditors.pricing.jconfig;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,16 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class SecurityConfigTest {
 
     @Test
-    void userDetailsService() throws Exception {
-        UserDetails alanaudo = User.withUsername("alanaudo")
-                .password("{bcrypt}$2b$12$57hCIjtRdycZER1e36ZuT.OpjScjbTc5JtrEzq1iG.U3BPK3AOXO.")
+    void userDetailsService() {
+        UserDetails andre = User.withUsername("andre")
+                .password("{bcrypt}$2a$10$Q7Cw0CPud2FyibAMo0qAWukTMPlVYhU.sBdZMRXec.1GVZdsjVfGu")
+                .roles("ADMIN", "USER")
+                .build();
+
+        UserDetails waffles = User.withUsername("waffles")
+                .password("{bcrypt}$2a$10$fR66BsNci0b1LD5GPf/eJuIshDxlHgT/9XnwxRaGkhi6gw1W3YFoi")
                 .roles("USER")
                 .build();
 
-        assertNotNull(alanaudo);
+        assertNotNull(andre);
+        assertNotNull(waffles);
     }
 
-    @Test
     void tracksChain() throws Exception {
     }
 }
