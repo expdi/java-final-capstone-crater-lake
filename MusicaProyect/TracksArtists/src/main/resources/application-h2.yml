@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      enabled: true
+  config:
+    activate:
+      on-profile: h2
+  sql:
+    init:
+      #data-locations: classpath:/postgres/musica-data-h2.sql
+      mode: always

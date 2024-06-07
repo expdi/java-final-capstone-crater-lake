@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: musicaTracks
+    ports:
+      - 5444:5432
+    volumes:
+      - musica-pg-db:/var/lib/postgresql/data
+volumes:
+  musica-pg-db: {}
