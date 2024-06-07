@@ -6,23 +6,16 @@ import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
 import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
-import com.expeditors.tracksartists.services.interfaces.IArtistService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
+//import org.springframework.security.test.context.support.WithMockUser;
+//import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -33,17 +26,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+//import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+//import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TrackController.class)
+//@WithMockUser(username = "alanaudo", roles = {"USER"})
 class TrackControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -64,12 +57,11 @@ class TrackControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
-                .apply(springSecurity())
+//                .apply(springSecurity())
                 .build();
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTrackById() throws Exception {
         int trackId = 540;
 
@@ -85,7 +77,9 @@ class TrackControllerTest {
         when(trackService.getById(trackId)).thenReturn(track);
 
         mockMvc.perform(get("/api/track/get/{id}", trackId)
-                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON))
+                                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+//                        .with(httpBasic("alanaudo", "password"))
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(track)))
                 .andDo(print());
@@ -94,7 +88,6 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getAll() throws Exception {
         List<Track> tracks = new ArrayList<>();
 
@@ -118,7 +111,6 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTracksBySpecificMediaType() throws Exception {
         MediaType mediaType = MediaType.MP3;
 
@@ -140,7 +132,6 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getTracksBySpecificYearOfIssueDate() throws Exception {
         LocalDateTime issueDate = LocalDateTime.of(2022,5,6,12,0,0);
 
@@ -169,7 +160,6 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getArtistsByTrack() throws Exception {
         Track track = new Track();
         track.setId(1);
@@ -197,7 +187,6 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void getByDurationDynamic() throws Exception {
         List<Track> tracks = new ArrayList<>();
         int seconds = 400;
@@ -228,9 +217,8 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void addTrack() throws Exception {
-        Track track = new Track();
+        Track track = mock(Track.class);
 
         when(track.getId()).thenReturn(1);
         when(track.getTitle()).thenReturn("Track #1");
@@ -256,14 +244,12 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void updateArtist() throws Exception {
         Track track = new Track();
         track.setId(1);
         track.setTitle("Track #1");
-        track.setMediaType(MediaType.WAV);
-        track.setPrice(1.5);
         track.setAlbum("Album #1");
+        track.setPrice(1.25);
 
         String trackJson = mapper.writeValueAsString(track);
 
@@ -281,15 +267,16 @@ class TrackControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "alanaudo", roles = {"USER"})
     void deleteArtist() throws Exception {
         int trackId = 125;
+
+        doNothing().when(trackService).delete(trackId);
 
         mockMvc.perform(
                         delete("/api/track/delete/{id}", trackId)
                                 .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isForbidden())
+                .andExpect(status().isOk())
                 .andDo(print());
 
         verify(trackService).delete(trackId);

@@ -6,7 +6,6 @@ import com.expeditors.tracksartists.exceptionHandlers.exceptions.WrongRequestExc
 import com.expeditors.tracksartists.models.Artist;
 import com.expeditors.tracksartists.models.Track;
 import com.expeditors.tracksartists.services.implemetations.ArtistServiceImpl;
-import com.expeditors.tracksartists.services.implemetations.TrackServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

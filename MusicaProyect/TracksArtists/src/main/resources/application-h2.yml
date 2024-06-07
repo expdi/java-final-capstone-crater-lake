@@ -14,5 +14,5 @@ spring:
       on-profile: h2
   sql:
     init:
-      data-locations: classpath:/postgres/musica-data-h2.sql
+      #data-locations: classpath:/postgres/musica-data-h2.sql
       mode: always

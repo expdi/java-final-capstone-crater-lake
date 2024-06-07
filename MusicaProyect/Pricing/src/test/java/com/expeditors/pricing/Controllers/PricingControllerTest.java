@@ -1,14 +1,18 @@
 package com.expeditors.pricing.Controllers;
 
 import com.expeditors.pricing.service.PricingService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -24,6 +28,17 @@ class PricingControllerTest {
     @MockBean
     private PricingService pricingService;
 
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                //.apply(springSecurity())
+                .build();
+    }
+
     @Test
     void getPrice() throws Exception {
         when(pricingService.getLowerLimit()).thenReturn(10.0);
@@ -31,8 +46,7 @@ class PricingControllerTest {
 
         mockMvc.perform(
                 get("/api/pricing")
-                        .contentType(MediaType.APPLICATION_JSON
-                        )
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -41,6 +55,7 @@ class PricingControllerTest {
         verify(pricingService).getUpperLimit();
     }
 
+    @WithMockUser(value = "andre", roles = {"ADMIN", "USER"})
     @Test
     void setLowerLimit() throws Exception {
         double ll = 10.0D;

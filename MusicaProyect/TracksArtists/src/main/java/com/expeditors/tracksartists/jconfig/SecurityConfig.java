@@ -20,7 +20,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
 
         UserDetails alanaudo = User.withUsername("alanaudo")
-                .password("{bcrypt}$2a$10$LkAQVsjdRLqd/s/DxB6qg.PTCtpFzeaU6bq6NpaMRA.GuldBfOnQa")
+                .password("{bcrypt}$2a$10$7qv4P1FIV6NF1c0K/QTCO.k5Lpq5j5M2r7FoeGnUw1jJpxdK5Q9jG")
                 .roles("USER")
                 .build();
 
