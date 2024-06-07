@@ -45,7 +45,9 @@ public class TrackController {
 
     @GetMapping("getAll")
     public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(this.trackService.getAll());
+        List<Track> tracks = this.trackService.getAll();
+        tracks.forEach(track -> track.setPrice(this.getPrice()));
+        return ResponseEntity.ok(tracks);
     }
 
     @GetMapping("getTracksBySpecificMediaType/{mediaType}")

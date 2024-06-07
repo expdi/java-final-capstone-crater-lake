@@ -401,6 +401,7 @@ class TrackServiceTest {
         }
 
         when(trackDao.findArtistsByTrack(track.getId())).thenReturn(track.getArtists().stream().toList());
+        when(trackDao.findById(track.getId())).thenReturn(Optional.of(track));
 
         List<Artist> result = trackService.getArtistByTrack(track.getId());
 
@@ -409,6 +410,7 @@ class TrackServiceTest {
                 () -> assertEquals(track.getArtists().stream().toList(), result)
         );
 
+        verify(trackDao).findById(track.getId());
         verify(trackDao).findArtistsByTrack(track.getId());
     }
 

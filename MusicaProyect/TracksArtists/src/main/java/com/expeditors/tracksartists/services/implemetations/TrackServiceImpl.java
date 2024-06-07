@@ -45,6 +45,8 @@ public class TrackServiceImpl implements ITrackService {
 
     @Override
     public void delete(int id) {
+        EntityValidator.getIfIsValidEntity(this.trackDao, id);
+
         this.trackDao.findById(id).ifPresent(track ->
             track.getArtists().forEach(artist -> artist.getTracks().remove(track))
         );
@@ -69,6 +71,7 @@ public class TrackServiceImpl implements ITrackService {
 
     @Override
     public List<Artist> getArtistByTrack(int idTrack) {
+        EntityValidator.getIfIsValidEntity(this.trackDao, idTrack);
         return this.trackDao.findArtistsByTrack(idTrack);
     }
 
